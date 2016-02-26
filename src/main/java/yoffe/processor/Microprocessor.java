@@ -1,32 +1,34 @@
 package yoffe.processor;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
 public class Microprocessor {
 	private char accumA, accumB;
 	private Memory memory;
-	private char[] instrucArray;
 	private StringBuilder builder;
 	private int count;
 
-	public Microprocessor() throws Exception {
+	public Microprocessor(char[] instruction) {
 		accumA = accumB = '0';
-		instrucArray = new char[256];
-		memory = new Memory("mach.in");
-		int instrucNum = 0;
-		while (instrucNum < memory.getInstructionsSize()) {
-			String s = memory.getInstruction();
-			readInstruction(instrucArray = s.toCharArray());
+		memory = new Memory();
+		memory.setInstruction(instruction);
+		/*
+		 * int instrucNum = 0; while (instrucNum < memory.getInstructionsSize())
+		 * { String s = memory.getInstruction(); readInstruction(instrucArray =
+		 * s.toCharArray());
+		 * 
+		 * s = new String(instrucArray); System.out.println(s);
+		 * 
+		 * instrucNum++; }
+		 */
+		readInstruction();
 
-			s = new String(instrucArray);
-			System.out.println(s);
-
-			instrucNum++;
-		}
 	}
 
-	public void readInstruction(char[] in) throws Exception {
-		if (in.length != 256) {
-			throw new Exception();
-		}
+	public void readInstruction() {
+		char[] in = memory.getInstruction();
 		String s;
 		count = 0;
 		char instruction, hex;
@@ -43,7 +45,7 @@ public class Microprocessor {
 				s = builder.toString();
 
 				int i = hexToDec(s);
-				accumA = instrucArray[i];
+				accumA = in[i];
 				count += 3;
 
 				break;
@@ -56,7 +58,7 @@ public class Microprocessor {
 				s = builder.toString();
 
 				int loc = hexToDec(s);
-				instrucArray[loc] = accumA;
+				in[loc] = accumA;
 				count += 3;
 
 				break;
@@ -139,11 +141,16 @@ public class Microprocessor {
 				count = location;
 				break;
 			case '8':
+				memory.setInstruction(in);
 				return;
 
 			}
 		}
 
+	}
+
+	public Memory getMemory() {
+		return memory;
 	}
 
 	private String decToHex(int dec) {
@@ -156,11 +163,21 @@ public class Microprocessor {
 	}
 
 	public static void main(String[] args) {
+		Microprocessor processor;
+		BufferedReader keyboard = new BufferedReader(new InputStreamReader(
+				System.in));
+
+		String line;
+		System.out.println("Output:");
 		try {
-			new Microprocessor();
-		} catch (Exception e) {
+			while ((line = keyboard.readLine()) != null) {
+				processor = new Microprocessor(line.toCharArray());
+				System.out.println(processor.getMemory().getInstruction());
+			}
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
 	}
 }
