@@ -14,15 +14,6 @@ public class Microprocessor {
 		accumA = accumB = '0';
 		memory = new Memory();
 		memory.setInstruction(instruction);
-		/*
-		 * int instrucNum = 0; while (instrucNum < memory.getInstructionsSize())
-		 * { String s = memory.getInstruction(); readInstruction(instrucArray =
-		 * s.toCharArray());
-		 * 
-		 * s = new String(instrucArray); System.out.println(s);
-		 * 
-		 * instrucNum++; }
-		 */
 		readInstruction();
 
 	}
@@ -164,16 +155,20 @@ public class Microprocessor {
 
 	public static void main(String[] args) {
 		Microprocessor processor;
-		BufferedReader keyboard = new BufferedReader(new InputStreamReader(
-				System.in));
-
-		String line;
-		System.out.println("Output:");
+		BufferedReader input;
 		try {
-			while ((line = keyboard.readLine()) != null) {
+			input = new BufferedReader(new InputStreamReader(
+					System.in));
+
+			String line;
+			System.out.println("Output:");
+
+			while ((line = input.readLine()) != null) {
 				processor = new Microprocessor(line.toCharArray());
 				System.out.println(processor.getMemory().getInstruction());
 			}
+
+			input.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
